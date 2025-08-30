@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Eye, EyeOff, User, Mail, Lock, Briefcase, AlertCircle, CheckCircle } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 
-const AuthForm = () => {
+const AuthForm = ({ onClose }) => {
   const [isSignUp, setIsSignUp] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
@@ -113,14 +113,13 @@ const AuthForm = () => {
           } else {
             // Create profile immediately if email is already confirmed
             await createProfile(data.user.id, formData.email, formData.fullName)
-            setMessage('Account created successfully! You can now sign in.')
+            setMessage('Account created successfully!')
+            // Close modal after successful signup
+            setTimeout(() => {
+              onClose && onClose()
+            }, 2000)
           }
           setFormData({ email: '', password: '', confirmPassword: '', fullName: '' })
-          // Switch to sign in mode after successful signup
-          setTimeout(() => {
-            setIsSignUp(false)
-            setMessage('')
-          }, 3000)
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -138,6 +137,9 @@ const AuthForm = () => {
           } else {
             setError(error.message)
           }
+        } else {
+          // Close modal after successful sign in
+          onClose && onClose()
         }
       }
     } catch (err) {
@@ -156,14 +158,13 @@ const AuthForm = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-teal-50 via-blue-50 to-indigo-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md border border-gray-100">
+    <div className="w-full">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-teal-600 to-blue-600 rounded-2xl mb-4 shadow-lg">
+        <div className="text-center mb-6">
+          <div className="inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r from-teal-600 to-blue-600 rounded-xl mb-3 shadow-lg">
             <Briefcase className="h-8 w-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">JobTracker</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">JobTracker</h1>
           <p className="text-gray-600">
             {isSignUp ? 'Create your account to start tracking jobs' : 'Welcome back! Sign in to continue'}
           </p>
@@ -186,7 +187,7 @@ const AuthForm = () => {
         )}
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           {/* Full Name Field (Sign Up Only) */}
           {isSignUp && (
             <div>
@@ -203,7 +204,7 @@ const AuthForm = () => {
                   value={formData.fullName}
                   onChange={handleInputChange}
                   required
-                  className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 bg-gray-50 focus:bg-white"
+                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 bg-gray-50 focus:bg-white"
                   placeholder="Enter your full name"
                 />
               </div>
@@ -225,7 +226,7 @@ const AuthForm = () => {
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 bg-gray-50 focus:bg-white"
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 bg-gray-50 focus:bg-white"
                 placeholder="Enter your email"
               />
             </div>
@@ -246,7 +247,7 @@ const AuthForm = () => {
                 value={formData.password}
                 onChange={handleInputChange}
                 required
-                className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 bg-gray-50 focus:bg-white"
+                className="block w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 bg-gray-50 focus:bg-white"
                 placeholder="Enter your password"
               />
               <button
@@ -279,7 +280,7 @@ const AuthForm = () => {
                   value={formData.confirmPassword}
                   onChange={handleInputChange}
                   required
-                  className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 bg-gray-50 focus:bg-white"
+                  className="block w-full pl-10 pr-12 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all duration-200 bg-gray-50 focus:bg-white"
                   placeholder="Confirm your password"
                 />
                 <button
@@ -301,7 +302,7 @@ const AuthForm = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100"
+            className="w-full flex items-center justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-teal-600 to-blue-600 hover:from-teal-700 hover:to-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:scale-105 disabled:hover:scale-100"
           >
             {loading ? (
               <div className="flex items-center space-x-2">
@@ -318,7 +319,7 @@ const AuthForm = () => {
         </form>
 
         {/* Switch Mode */}
-        <div className="mt-8 text-center">
+        <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             {isSignUp ? 'Already have an account?' : "Don't have an account?"}
             <button
@@ -332,14 +333,13 @@ const AuthForm = () => {
 
         {/* Additional Info for Sign Up */}
         {isSignUp && (
-          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
             <p className="text-xs text-blue-700 text-center leading-relaxed">
               By creating an account, you agree to our terms of service and privacy policy. 
               Your data is securely stored and only accessible to you.
             </p>
           </div>
         )}
-      </div>
     </div>
   )
 }

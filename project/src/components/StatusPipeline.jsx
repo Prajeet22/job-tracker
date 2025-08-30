@@ -2,10 +2,10 @@ import React from 'react'
 
 const statusConfig = {
   bookmarked: { label: 'BOOKMARKED', color: 'bg-gray-400', textColor: 'text-gray-600' },
-  applying: { label: 'APPLYING', color: 'bg-blue-400', textColor: 'text-blue-600' },
+  saved: { label: 'SAVED', color: 'bg-blue-400', textColor: 'text-blue-600' },
   applied: { label: 'APPLIED', color: 'bg-yellow-400', textColor: 'text-yellow-600' },
-  interviewing: { label: 'INTERVIEWING', color: 'bg-purple-400', textColor: 'text-purple-600' },
-  negotiating: { label: 'NEGOTIATING', color: 'bg-orange-400', textColor: 'text-orange-600' },
+  test: { label: 'TEST', color: 'bg-purple-400', textColor: 'text-purple-600' },
+  interview: { label: 'INTERVIEW', color: 'bg-orange-400', textColor: 'text-orange-600' },
   accepted: { label: 'ACCEPTED', color: 'bg-green-400', textColor: 'text-green-600' }
 }
 

@@ -3,38 +3,26 @@ import { supabase } from '../lib/supabase';
 
 export const useJobs = (userId) => {
   const [jobs, setJobs] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchJobs = async () => {
+    if (!userId) {
+      setJobs([]);
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
       setError(null);
       
-      // Use passed userId or get current user
-      let currentUserId = userId;
-      if (!currentUserId) {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) {
-          console.error('Error getting user:', userError);
-          setError('Authentication error: ' + userError.message);
-          return;
-        }
-        currentUserId = user?.id;
-      }
-      
-      if (!currentUserId) {
-        console.log('No authenticated user found');
-        setJobs([]);
-        return;
-      }
-
-      console.log('Fetching jobs for user:', currentUserId);
+      console.log('Fetching jobs for user:', userId);
       
       const { data, error: fetchError } = await supabase
         .from('jobs')
         .select('*')
-        .eq('user_id', currentUserId)
+        .eq('user_id', userId)
         .order('date_saved', { ascending: false });
 
       if (fetchError) {
@@ -48,34 +36,28 @@ export const useJobs = (userId) => {
       
     } catch (err) {
       console.error('Unexpected error in fetchJobs:', err);
-      setError('Unexpected error: ' + err.message);
+      setError('Failed to load jobs. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   const addJob = async (jobData) => {
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+
     try {
       setError(null);
       
-      let currentUserId = userId;
-      if (!currentUserId) {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) throw new Error('Authentication error: ' + userError.message);
-        currentUserId = user?.id;
-      }
-      
-      if (!currentUserId) {
-        throw new Error('User not authenticated');
-      }
-
       const jobWithDefaults = {
         ...jobData,
-        user_id: currentUserId,
+        user_id: userId,
         date_saved: new Date().toISOString(),
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
+
       const { data, error } = await supabase
         .from('jobs')
         .insert([jobWithDefaults])
@@ -98,32 +80,24 @@ export const useJobs = (userId) => {
   };
 
   const updateJob = async (jobToUpdate) => {
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+
     try {
       setError(null);
       
-      let currentUserId = userId;
-      if (!currentUserId) {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) throw new Error('Authentication error: ' + userError.message);
-        currentUserId = user?.id;
-      }
-      
-      if (!currentUserId) {
-        throw new Error('User not authenticated');
-      }
-
       const updates = {
         ...jobToUpdate,
         updated_at: new Date().toISOString()
       };
       
-      // Remove id from updates to avoid conflicts
       const { id, ...updateData } = updates;
       const { data, error } = await supabase
         .from('jobs')
         .update(updateData)
         .eq('id', jobToUpdate.id)
-        .eq('user_id', currentUserId)
+        .eq('user_id', userId)
         .select()
         .single();
 
@@ -143,25 +117,18 @@ export const useJobs = (userId) => {
   };
 
   const deleteJob = async (id) => {
+    if (!userId) {
+      throw new Error('User not authenticated');
+    }
+
     try {
       setError(null);
       
-      let currentUserId = userId;
-      if (!currentUserId) {
-        const { data: { user }, error: userError } = await supabase.auth.getUser();
-        if (userError) throw new Error('Authentication error: ' + userError.message);
-        currentUserId = user?.id;
-      }
-      
-      if (!currentUserId) {
-        throw new Error('User not authenticated');
-      }
-
       const { error } = await supabase
         .from('jobs')
         .delete()
         .eq('id', id)
-        .eq('user_id', currentUserId);
+        .eq('user_id', userId);
 
       if (error) {
         console.error('Error deleting job:', error);
@@ -178,15 +145,12 @@ export const useJobs = (userId) => {
   };
 
   useEffect(() => {
-    if (userId) {
-      fetchJobs();
-    }
+    fetchJobs();
   }, [userId]);
 
   useEffect(() => {
     if (!userId) return;
 
-    // Set up real-time subscription for the specific user
     const subscription = supabase
       .channel('jobs_changes')
       .on('postgres_changes', 

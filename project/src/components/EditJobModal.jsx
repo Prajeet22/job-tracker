@@ -22,10 +22,10 @@ const EditJobModal = ({ isOpen, onClose, job, onUpdateJob }) => {
 
   const statusOptions = [
     { value: 'bookmarked', label: 'Bookmarked' },
-    { value: 'applying', label: 'Applying' },
+    { value: 'saved', label: 'Saved' },
     { value: 'applied', label: 'Applied' },
-    { value: 'interviewing', label: 'Interviewing' },
-    { value: 'negotiating', label: 'Negotiating' },
+    { value: 'test', label: 'Test' },
+    { value: 'interview', label: 'Interview' },
     { value: 'accepted', label: 'Accepted' }
   ]
 
