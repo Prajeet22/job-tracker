@@ -145,10 +145,10 @@ const AddJobModal = ({ isOpen, onClose, onAddJob }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 text-sm"
             >
               <option value="bookmarked">Bookmarked</option>
-              <option value="applying">Applying</option>
+              <option value="saved"><Saved></Saved></option>
               <option value="applied">Applied</option>
-              <option value="interviewing">Interviewing</option>
-              <option value="negotiating">Negotiating</option>
+              <option value="test"><Test></Test></option>
+              <option value="interview">Interview</option>
               <option value="accepted">Accepted</option>
             </select>
           </div>
