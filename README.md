@@ -1,6 +1,6 @@
 # Job Tracker & AI Resume Analyzer
 
-A full-stack **Job Application Tracker** and **ATS Resume Scoring System** built with **React**, **Supabase**, and an **Express backend powered by Google Gemini AI**. 
+A full-stack **Job Application Tracker** and **ATS Resume Scoring System** built with **React**, **Supabase**, and an **Express backend powered by Google Gemini AI**.
 
 In addition to tracking application lifecycles and pipeline metrics, the platform includes a privacy-first, stateless **Instant Resume Analyzer** that evaluates resumes against job descriptions in real time without persisting sensitive documents to a database.
 
@@ -25,23 +25,68 @@ In addition to tracking application lifecycles and pipeline metrics, the platfor
 
 ## Tech Stack
 
-- **Frontend:** React.js (Vite), React Router, Tailwind CSS, Chart.js, Axios
-- **Database & Auth:** Supabase (PostgreSQL + Supabase Auth)
-- **AI Backend:** Node.js, Express.js
-- **Document Processing:** Multer (memory storage), PdfReader
-- **AI Engine:** Google Gemini API (`@google/genai`)
-- **Deployment:** Netlify (Frontend)
+| Layer | Technologies |
+|---|---|
+| **Frontend** | React.js (Vite), React Router, Tailwind CSS, Chart.js, Axios |
+| **Database & Auth** | Supabase (PostgreSQL + Supabase Auth) |
+| **AI Backend** | Node.js, Express.js |
+| **Document Processing** | Multer (memory storage), PdfReader |
+| **AI Engine** | Google Gemini API (`@google/genai`) |
 
 ---
 
-## Architecture Overview
+## Getting Started
 
-```text
-├── project/              # Frontend Client (Vite + React)
-│   ├── src/components/   # Tracker modals, tables, charts, & sidebar
-│   ├── src/pages/        # Dashboard & InstantAnalyzer view
-│   └── src/lib/          # Supabase client & session management
-│
-└── backend/              # AI Proxy Server (Express + Node.js)
-    ├── routes/           # Stateless analyzer endpoint (/api/analyzer)
-    └── utils/            # Gemini AI prompt engine & in-memory PDF reader
+### Prerequisites
+- Node.js (v18+)
+- A [Supabase](https://supabase.com) project (URL + anon key)
+- A [Google Gemini API key](https://ai.google.dev)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yourname/job-tracker-resume-analyzer.git
+cd job-tracker-resume-analyzer
+
+# Install dependencies
+npm install
+
+# Configure environment variables
+cp .env.example .env
+```
+
+Fill in `.env` with your keys:
+
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+```bash
+# Start the development server
+npm run dev
+```
+
+---
+
+## Application Pipeline
+
+Applications move through six stages, updated manually as your search progresses:
+
+`Bookmarked` → `Applying` → `Applied` → `Interviewing` → `Negotiating` → `Accepted`
+
+---
+
+## Privacy Model
+
+The Resume Analyzer is intentionally stateless:
+
+- Resumes are parsed **in-memory only** (Multer memory storage + PdfReader) — never written to disk.
+- Job descriptions and generated scores are **never persisted** to the database.
+- All analysis data is discarded once the API response is sent.
+
+---
+
+
