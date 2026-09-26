@@ -73,9 +73,9 @@ npm run dev
 
 ## Application Pipeline
 
-Applications move through six stages, updated manually as your search progresses:
+Applications move through several stages, updated manually as your search progresses:
 
-`Bookmarked` → `Applying` → `Applied` → `Interviewing` → `Negotiating` → `Accepted`
+`Bookmarked` → `Saved` → `Applied` → `Test` → `Interview` → `Accepted`
 
 ---
 
