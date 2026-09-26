@@ -1,4 +1,4 @@
-// frontend/src/pages/InstantAnalyzer.jsx
+
 import { useState, useRef, useEffect } from 'react';
 import axios from 'axios';
 import './analyzer.css';
@@ -134,7 +134,8 @@ export default function InstantAnalyzer() {
     formData.append('resumePdf', pdfFile);
 
     try {
-      const res = await axios.post('http://localhost:5000/api/analyzer/instant-analyze', formData, {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+      const res = await axios.post(`${apiUrl}/api/analyzer`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setAnalysisResult(res.data); // Held purely in memory, nothing is saved
