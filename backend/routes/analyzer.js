@@ -19,7 +19,8 @@ const extractTextFromPDF = (buffer) => {
 };
 
 // POST: Stateless analysis endpoint (No DB save)
-router.post('/instant-analyze', upload.single('resumePdf'), async (req, res) => {
+// CHANGED: Route is now '/' so it precisely matches '/api/analyzer' from server.js
+router.post('/', upload.single('resumePdf'), async (req, res) => {
   try {
     const { jobDescription, position } = req.body;
     let resumeText = '';
@@ -53,5 +54,4 @@ router.post('/instant-analyze', upload.single('resumePdf'), async (req, res) => 
   }
 });
 
-// This line fixes your Node.js import crash
 export default router;
